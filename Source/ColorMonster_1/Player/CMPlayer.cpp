@@ -8,6 +8,7 @@
 #include "InputMappingContext.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
+#include "Animation/CMPlayerAnimInstance.h"
 
 ACMPlayer::ACMPlayer()
 {
@@ -29,6 +30,11 @@ ACMPlayer::ACMPlayer()
 	if (AnimInstanceClassRef.Class)
 	{
 		GetMesh()->SetAnimInstanceClass(AnimInstanceClassRef.Class);
+		UE_LOG(LogTemp, Warning, TEXT("Succeed to call anim instance class"));
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Failed to call anim instance class"));
 	}
 	//GetMesh()->SetupAttachment(RootComponent);
 	GetMesh()->SetRelativeRotation(FRotator(0, -90, 0));
@@ -64,6 +70,14 @@ ACMPlayer::ACMPlayer()
 	{
 		FireAction = InputActionFireRef.Object;
 	}
+
+	isLeft = 0;
+
+	static ConstructorHelpers::FObjectFinder<UInputAction> InputActionConvertRef(TEXT("/Script/EnhancedInput.InputAction'/Game/FirstPerson/Input/Actions/IA_Convert.IA_Convert'"));
+	if (nullptr != InputActionConvertRef.Object)
+	{
+		ConvertAction = InputActionConvertRef.Object;
+	}
 }
 
 void ACMPlayer::BeginPlay()
@@ -79,6 +93,8 @@ void ACMPlayer::BeginPlay()
 			Subsystem->AddMappingContext(DefaultMappingContext, 0);
 		}
 	}
+
+	
 }
 
 void ACMPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -99,6 +115,9 @@ void ACMPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 
 		// Fire
 		EnhancedInputComponent->BindAction(FireAction, ETriggerEvent::Triggered, this, &ACMPlayer::Fire);
+
+		// Converting Gun
+		EnhancedInputComponent->BindAction(ConvertAction, ETriggerEvent::Triggered, this, &ACMPlayer::ConvertingGun);
 	}
 	else
 	{
@@ -134,5 +153,24 @@ void ACMPlayer::Look(const FInputActionValue& Value)
 
 void ACMPlayer::Fire()
 {
+	PlayerAnimInstance = Cast<UCMPlayerAnimInstance>(GetMesh()->GetAnimInstance());
+	if (PlayerAnimInstance == nullptr)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Failed to cast anim instance"));
+		return;
+	}
 	UE_LOG(LogTemp, Warning, TEXT("Shoot!"));
+	PlayerAnimInstance->PlayShooting();
+}
+
+void ACMPlayer::ConvertingGun()
+{
+	PlayerAnimInstance = Cast<UCMPlayerAnimInstance>(GetMesh()->GetAnimInstance());
+	if (PlayerAnimInstance == nullptr)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Failed to cast anim instance"));
+		return;
+	}
+	PlayerAnimInstance->PlayConverting();
+	UE_LOG(LogTemp, Warning, TEXT("Converting Gun!: %d"), isLeft);
 }

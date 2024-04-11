@@ -53,6 +53,10 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	class UInputAction* FireAction;
 
+	/** Converting Gun Input Action */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	class UInputAction* ConvertAction;
+
 
 public:
 	// Called to bind functionality to input
@@ -65,5 +69,15 @@ protected:
 	/** Called for looking input */
 	void Look(const FInputActionValue& Value);
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Animation, meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<class UCMPlayerAnimInstance> PlayerAnimInstance;
+
 	void Fire();
+
+	void ConvertingGun();
+
+public:
+	UPROPERTY(EditAnywhere)
+	uint8 isLeft;
+
 };
