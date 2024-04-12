@@ -31,7 +31,7 @@ UCMPlayerAnimInstance::UCMPlayerAnimInstance()
 		UE_LOG(LogTemp, Warning, TEXT("FAILED LOADING RightLeft MONTAGE"));
 	}
 	LeftRightMontage = RightLeftMontageRef.Object;
-	/*static ConstructorHelpers::FObjectFinder<UAnimMontage> LeftRightMontageRef(TEXT("/Game/Animation/RightLeft_Montage.RightLeft_Montage"));
+	static ConstructorHelpers::FObjectFinder<UAnimMontage> LeftRightMontageRef(TEXT("/Game/Animation/RightLeft_Montage.RightLeft_Montage"));
 	if (LeftRightMontageRef.Object)
 	{
 		LeftRightMontage = LeftRightMontageRef.Object;
@@ -39,7 +39,7 @@ UCMPlayerAnimInstance::UCMPlayerAnimInstance()
 	else
 	{
 		UE_LOG(LogTemp, Warning, TEXT("FAILED LOADING LeftRight MONTAGE"));
-	}*/
+	}
 }
 
 void UCMPlayerAnimInstance::NativeInitializeAnimation()
