@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "Player/CMPlayer.h"
@@ -77,6 +77,27 @@ ACMPlayer::ACMPlayer()
 	if (nullptr != InputActionConvertRef.Object)
 	{
 		ConvertAction = InputActionConvertRef.Object;
+	}
+
+	World = GetWorld();
+
+	// Projectile Class
+	static ConstructorHelpers::FClassFinder<AActor> ProjectileRef(TEXT("/Game/Blueprint/BP_FirstPersonProjectile.BP_FirstPersonProjectile_C"));
+	if (ProjectileRef.Class)
+	{
+		Projectile = Cast<UClass>(ProjectileRef.Class);
+		if (Projectile)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Succeed to call Projectile class & Casting"));
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Failed to Casting Projectile class"));
+		}
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Failed to call Projectile class"));
 	}
 }
 
@@ -161,6 +182,8 @@ void ACMPlayer::Fire()
 	}
 	UE_LOG(LogTemp, Warning, TEXT("Shoot!"));
 	PlayerAnimInstance->PlayShooting();
+	World->SpawnActor<AActor>(Projectile, GetActorLocation() + FVector(70, 0, 70), GetActorRotation());
+	
 }
 
 void ACMPlayer::ConvertingGun()
