@@ -9,15 +9,16 @@
 // Sets default values
 ACMProjectileActor::ACMProjectileActor()
 {
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
-
 	// Sphere Collision
 	CollisionComponent = CreateDefaultSubobject<USphereComponent>(TEXT("Collision"));
 	CollisionComponent->InitSphereRadius(16.0f);
 	CollisionComponent->BodyInstance.SetCollisionProfileName(TEXT("Projectile"));
 	CollisionComponent->OnComponentHit.AddDynamic(this, &ACMProjectileActor::OnHit);
 	RootComponent = CollisionComponent;
+
+	// Players can't walk on it
+	CollisionComponent->SetWalkableSlopeOverride(FWalkableSlopeOverride(WalkableSlope_Unwalkable, 0.f));
+	CollisionComponent->CanCharacterStepUpOn = ECB_No;
 
 	// Static Mesh
 	StaticMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("StaticMesh"));
@@ -48,6 +49,9 @@ ACMProjectileActor::ACMProjectileActor()
 	ProjectileMovementComponent->bRotationFollowsVelocity = false;
 	ProjectileMovementComponent->bShouldBounce = true;
 	ProjectileMovementComponent->Bounciness = 0.6f;
+
+	// Die after 3 seconds by default
+	InitialLifeSpan = 3.0f;
 }
 
 // Called when the game starts or when spawned
@@ -66,9 +70,16 @@ void ACMProjectileActor::Tick(float DeltaTime)
 
 void ACMProjectileActor::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, FVector NormalImpulse, const FHitResult& Hit)
 {
-	if (OtherActor != this && OtherComponent->IsSimulatingPhysics())
+	if ((OtherActor != this) && (OtherComponent != nullptr) && OtherComponent->IsSimulatingPhysics())
 	{
 		OtherComponent->AddImpulseAtLocation(ProjectileMovementComponent->Velocity * 100.0f, Hit.ImpactPoint);
+
+		if (OtherActor)
+		{
+
+		}
+
+		Destroy();
 	}
 }
 
