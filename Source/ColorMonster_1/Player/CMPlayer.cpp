@@ -82,7 +82,7 @@ ACMPlayer::ACMPlayer()
 	World = GetWorld();
 
 	// Projectile Class
-	static ConstructorHelpers::FClassFinder<AActor> ProjectileRef(TEXT("/Game/Blueprint/BP_FirstPersonProjectile.BP_FirstPersonProjectile_C"));
+	static ConstructorHelpers::FClassFinder<AActor> ProjectileRef(TEXT("/Game/Blueprint/BP_CMProjectile.BP_CMProjectile_C"));
 	if (ProjectileRef.Class)
 	{
 		Projectile = Cast<UClass>(ProjectileRef.Class);
