@@ -74,10 +74,7 @@ void ACMProjectileActor::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherA
 	{
 		OtherComponent->AddImpulseAtLocation(ProjectileMovementComponent->Velocity * 100.0f, Hit.ImpactPoint);
 
-		if (OtherActor)
-		{
-
-		}
+		
 
 		Destroy();
 	}
