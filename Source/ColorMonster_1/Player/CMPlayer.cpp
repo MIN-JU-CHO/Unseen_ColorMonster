@@ -8,7 +8,9 @@
 #include "InputMappingContext.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
+
 #include "Animation/CMPlayerAnimInstance.h"
+#include "Player/CMProjectileActor.h"
 
 ACMPlayer::ACMPlayer()
 {
@@ -72,6 +74,7 @@ ACMPlayer::ACMPlayer()
 	}
 
 	isLeft = 0;
+	MuzzleOffset = FVector(200, 0, 0);
 
 	static ConstructorHelpers::FObjectFinder<UInputAction> InputActionConvertRef(TEXT("/Script/EnhancedInput.InputAction'/Game/FirstPerson/Input/Actions/IA_Convert.IA_Convert'"));
 	if (nullptr != InputActionConvertRef.Object)
@@ -82,11 +85,12 @@ ACMPlayer::ACMPlayer()
 	World = GetWorld();
 
 	// Projectile Class
-	static ConstructorHelpers::FClassFinder<AActor> ProjectileRef(TEXT("/Game/Blueprint/BP_CMProjectile.BP_CMProjectile_C"));
+	static ConstructorHelpers::FClassFinder<ACMProjectileActor> ProjectileRef(TEXT("/Game/Blueprint/BP_CMProjectile.BP_CMProjectile_C"));
 	if (ProjectileRef.Class)
 	{
-		Projectile = Cast<UClass>(ProjectileRef.Class);
-		if (Projectile)
+		ProjectileClass = ProjectileRef.Class;
+		//ProjectileClass = Cast<UClass>(ProjectileRef.Class);
+		if (ProjectileClass)
 		{
 			UE_LOG(LogTemp, Warning, TEXT("Succeed to call Projectile class & Casting"));
 		}
@@ -182,7 +186,29 @@ void ACMPlayer::Fire()
 	}
 	UE_LOG(LogTemp, Warning, TEXT("Shoot!"));
 	PlayerAnimInstance->PlayShooting();
-	World->SpawnActor<AActor>(Projectile, GetActorLocation() + FVector(70, 0, 70), GetActorRotation());
+	if (ProjectileClass)
+	{
+		FVector CameraLocation;
+		FRotator CameraRotation;
+		GetActorEyesViewPoint(CameraLocation, CameraRotation);
+
+		FVector MuzzleLocation = CameraLocation + FTransform(CameraRotation).TransformVector(MuzzleOffset);
+		FRotator MuzzleRotation = CameraRotation;
+		MuzzleRotation.Pitch += 10.0f;
+		if (World)
+		{
+			FActorSpawnParameters SpawnParams;
+			SpawnParams.Owner = this;
+			SpawnParams.Instigator = GetInstigator();
+
+			ACMProjectileActor* Projectile = World->SpawnActor<ACMProjectileActor>(ProjectileClass, MuzzleLocation, MuzzleRotation, SpawnParams);
+			if (Projectile)
+			{
+				FVector LaunchDirection = MuzzleRotation.Vector();
+				Projectile->FireInDirection(LaunchDirection);
+			}
+		}
+	}
 	
 }
 

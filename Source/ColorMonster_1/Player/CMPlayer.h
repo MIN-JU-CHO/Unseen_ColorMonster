@@ -61,7 +61,7 @@ protected:
 	TObjectPtr<class UWorld> World;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-	TObjectPtr<UClass> Projectile;
+	TSubclassOf<class ACMProjectileActor> ProjectileClass;
 
 
 public:
@@ -85,5 +85,8 @@ protected:
 public:
 	UPROPERTY(EditAnywhere)
 	uint8 isLeft;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "GamePlay")
+	FVector MuzzleOffset;
 
 };
