@@ -3,6 +3,9 @@
 
 #include "Game/CMGameMode.h"
 
+#include "GameFramework/HUD.h"
+#include "UI/CMFPSHUD.h"
+
 ACMGameMode::ACMGameMode()
 {
 	static ConstructorHelpers::FClassFinder<APawn> PlayerPawnClassRef(TEXT("/Game/Blueprint/BP_CMPlayer.BP_CMPlayer_C"));
@@ -15,4 +18,11 @@ ACMGameMode::ACMGameMode()
 	{
 		PlayerControllerClass = PlayerControllerClassRef.Class;
 	}
+
+	static ConstructorHelpers::FClassFinder<ACMFPSHUD> HUDClassRef(TEXT("/Game/Blueprint/BP_CMFPSHUD.BP_CMFPSHUD_C"));
+	if (HUDClassRef.Class)
+	{
+		HUDClass = HUDClassRef.Class;
+	}
+	// TSubclassOf<Derieved> -> Available Upcasting 
 }
