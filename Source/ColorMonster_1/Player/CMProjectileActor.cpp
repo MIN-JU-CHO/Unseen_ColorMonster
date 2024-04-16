@@ -12,9 +12,10 @@ ACMProjectileActor::ACMProjectileActor()
 	// Sphere Collision
 	CollisionComponent = CreateDefaultSubobject<USphereComponent>(TEXT("Collision"));
 	CollisionComponent->InitSphereRadius(16.0f);
+	RootComponent = CollisionComponent;
+
 	CollisionComponent->BodyInstance.SetCollisionProfileName(TEXT("Projectile"));
 	CollisionComponent->OnComponentHit.AddDynamic(this, &ACMProjectileActor::OnHit);
-	RootComponent = CollisionComponent;
 
 	// Players can't walk on it
 	CollisionComponent->SetWalkableSlopeOverride(FWalkableSlopeOverride(WalkableSlope_Unwalkable, 0.f));
@@ -66,6 +67,11 @@ void ACMProjectileActor::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+}
+
+void ACMProjectileActor::FireInDirection(const FVector& ShootDirection)
+{
+	ProjectileMovementComponent->Velocity = ShootDirection * ProjectileMovementComponent->InitialSpeed;
 }
 
 void ACMProjectileActor::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, FVector NormalImpulse, const FHitResult& Hit)
