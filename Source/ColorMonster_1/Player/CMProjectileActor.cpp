@@ -15,7 +15,8 @@ ACMProjectileActor::ACMProjectileActor()
 	RootComponent = CollisionComponent;
 
 	CollisionComponent->BodyInstance.SetCollisionProfileName(TEXT("Projectile"));
-	CollisionComponent->OnComponentHit.AddDynamic(this, &ACMProjectileActor::OnHit);
+	//CollisionComponent->OnComponentHit.AddDynamic(this, &ACMProjectileActor::OnHit);
+	CollisionComponent->OnComponentBeginOverlap.AddDynamic(this, &ACMProjectileActor::OnTriggerBegin);
 
 	// Players can't walk on it
 	CollisionComponent->SetWalkableSlopeOverride(FWalkableSlopeOverride(WalkableSlope_Unwalkable, 0.f));
@@ -86,3 +87,12 @@ void ACMProjectileActor::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherA
 	}
 }
 
+void ACMProjectileActor::OnTriggerBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+
+}
+
+
+//GetWorld()->OverlapMultiByChannel()
+//UKismetSystemLibrary::SphereOverlapActors()
+//UKismetSystemLibrary::SphereTraceSingle()

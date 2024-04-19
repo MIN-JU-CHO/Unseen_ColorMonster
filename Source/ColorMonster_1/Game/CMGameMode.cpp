@@ -24,5 +24,5 @@ ACMGameMode::ACMGameMode()
 	{
 		HUDClass = HUDClassRef.Class;
 	}
-	// TSubclassOf<Derieved> -> Available Upcasting 
+	// TSubclassOf<Derieved> -> Available Downcasting 
 }
